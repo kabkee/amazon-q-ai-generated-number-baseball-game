@@ -15,20 +15,41 @@
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
             color: #333;
+            margin: 0;
         }
 
         .game-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+        }
+
+        .game-panel {
             background: white;
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 90%;
+            flex: 1;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .history-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         h1 {
@@ -119,14 +140,58 @@
         }
 
         .history {
-            margin-top: 30px;
-            text-align: left;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .history h3 {
             color: #2d3748;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 1.5em;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .history-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .history-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .history-content::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+
+        .history-content::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        .empty-history {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #a0aec0;
+            font-size: 18px;
+        }
+
+        .empty-history-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
         }
 
         .guess-item {
@@ -261,8 +326,28 @@
             font-size: 16px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 1024px) {
             .game-container {
+                flex-direction: column;
+                height: auto;
+                gap: 20px;
+            }
+            
+            .game-panel, .history-panel {
+                flex: none;
+            }
+            
+            .history-panel {
+                max-height: 400px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-panel, .history-panel {
                 padding: 20px;
             }
             
@@ -279,54 +364,70 @@
                 height: 50px;
                 font-size: 20px;
             }
+            
+            .difficulty-selector {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <h1>⚾ Number Baseball</h1>
-        <p class="subtitle" id="subtitle">Guess the 3-digit secret number!</p>
-        
-        <div class="difficulty-selector">
-            <label class="difficulty-option">
-                <input type="radio" name="difficulty" value="3" checked>
-                <span class="radio-custom"></span>
-                3 Digits (Easy)
-            </label>
-            <label class="difficulty-option">
-                <input type="radio" name="difficulty" value="4">
-                <span class="radio-custom"></span>
-                4 Digits (Hard)
-            </label>
-        </div>
-        
-        <div class="rules">
-            <h3>How to Play:</h3>
-            <ul>
-                <li><strong>Strike:</strong> Correct digit in correct position</li>
-                <li><strong>Ball:</strong> Correct digit in wrong position</li>
-                <li><strong>Goal:</strong> Get <span id="targetStrikes">3</span> strikes to win!</li>
-                <li>Each digit is unique (0-9)</li>
-            </ul>
-        </div>
-
-        <div class="input-section">
-            <div class="number-inputs" id="numberInputs">
-                <input type="number" class="digit-input" id="digit1" min="0" max="9" maxlength="1">
-                <input type="number" class="digit-input" id="digit2" min="0" max="9" maxlength="1">
-                <input type="number" class="digit-input" id="digit3" min="0" max="9" maxlength="1">
+        <!-- Left Panel - Game Controls -->
+        <div class="game-panel">
+            <h1>⚾ Number Baseball</h1>
+            <p class="subtitle" id="subtitle">Guess the 3-digit secret number!</p>
+            
+            <div class="difficulty-selector">
+                <label class="difficulty-option">
+                    <input type="radio" name="difficulty" value="3" checked>
+                    <span class="radio-custom"></span>
+                    3 Digits (Easy)
+                </label>
+                <label class="difficulty-option">
+                    <input type="radio" name="difficulty" value="4">
+                    <span class="radio-custom"></span>
+                    4 Digits (Hard)
+                </label>
             </div>
-            <button class="guess-btn" id="guessBtn">Make Guess</button>
+            
+            <div class="rules">
+                <h3>How to Play:</h3>
+                <ul>
+                    <li><strong>Strike:</strong> Correct digit in correct position</li>
+                    <li><strong>Ball:</strong> Correct digit in wrong position</li>
+                    <li><strong>Goal:</strong> Get <span id="targetStrikes">3</span> strikes to win!</li>
+                    <li>Each digit is unique (0-9)</li>
+                </ul>
+            </div>
+
+            <div class="input-section">
+                <div class="number-inputs" id="numberInputs">
+                    <input type="number" class="digit-input" id="digit1" min="0" max="9" maxlength="1">
+                    <input type="number" class="digit-input" id="digit2" min="0" max="9" maxlength="1">
+                    <input type="number" class="digit-input" id="digit3" min="0" max="9" maxlength="1">
+                </div>
+                <button class="guess-btn" id="guessBtn">Make Guess</button>
+            </div>
+
+            <div class="attempts" id="attempts">Attempts: 0</div>
+
+            <div id="winMessage" style="display: none;"></div>
         </div>
 
-        <div class="attempts" id="attempts">Attempts: 0</div>
-
-        <div class="history" id="history" style="display: none;">
-            <h3>Guess History</h3>
-            <div id="historyList"></div>
+        <!-- Right Panel - Guess History -->
+        <div class="history-panel">
+            <div class="history" id="history">
+                <h3>Guess History</h3>
+                <div class="history-content" id="historyContent">
+                    <div class="empty-history">
+                        <div class="empty-history-icon">🎯</div>
+                        <div>Your guesses will appear here</div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div id="winMessage" style="display: none;"></div>
     </div>
 
     <script>
@@ -437,12 +538,15 @@
                 this.gameWon = false;
                 
                 // Clear history
-                const historyDiv = document.getElementById('history');
-                const historyList = document.getElementById('historyList');
+                const historyContent = document.getElementById('historyContent');
                 const winMessage = document.getElementById('winMessage');
                 
-                historyDiv.style.display = 'none';
-                historyList.innerHTML = '';
+                historyContent.innerHTML = `
+                    <div class="empty-history">
+                        <div class="empty-history-icon">🎯</div>
+                        <div>Your guesses will appear here</div>
+                    </div>
+                `;
                 winMessage.style.display = 'none';
                 
                 // Enable controls
@@ -501,10 +605,13 @@
             }
 
             displayResult(guess, result) {
-                const historyDiv = document.getElementById('history');
-                const historyList = document.getElementById('historyList');
+                const historyContent = document.getElementById('historyContent');
 
-                historyDiv.style.display = 'block';
+                // Remove empty state if it exists
+                const emptyHistory = historyContent.querySelector('.empty-history');
+                if (emptyHistory) {
+                    emptyHistory.remove();
+                }
 
                 const guessItem = document.createElement('div');
                 guessItem.className = 'guess-item';
@@ -516,7 +623,10 @@
                     </div>
                 `;
 
-                historyList.insertBefore(guessItem, historyList.firstChild);
+                historyContent.insertBefore(guessItem, historyContent.firstChild);
+                
+                // Auto-scroll to top to show the latest guess
+                historyContent.scrollTop = 0;
             }
 
             displayWinMessage() {

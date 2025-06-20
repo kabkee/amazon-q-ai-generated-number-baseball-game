@@ -1,62 +1,83 @@
-# 🎮 Number Baseball Game (HTML5 + CSS)
+# ⚾️ Number Baseball Game with Amazon Q CLI
 
-This is a lightweight **Number Baseball Game** built using **only HTML5 and CSS**, generated using **Amazon Q CLI** for the [AWS Game Challenge Event](https://community.aws/content/2xIoduO0xhkhUApQpVUIqBFGmAc/build-games-with-amazon-q-cli-and-score-a-t-shirt).
-
-![Screenshot](screenshots/Screenshot-v2-1.png)
-![Screenshot](screenshots/Screenshot-v2-2.png)
-![Screenshot](screenshots/Screenshot-v2-3.png)
-
----
+A clean, responsive Number Baseball game created using **HTML5 and CSS only**—built with the help of **Amazon Q CLI**.  
+Participating in the [Build Games with Amazon Q CLI Challenge](https://community.aws/content/2xIoduO0xhkhUApQpVUIqBFGmAc/build-games-with-amazon-q-cli-and-score-a-t-shirt).
 
 ## 🧠 My Prompt to Amazon Q CLI
 
 > **First Prompt:**  
-> _Make a number-baseball game in HTML5 and CSS only, in the folder of `/Users/kabkee/Downloads`._
+> `Make a number baseball game using HTML5 and CSS only, in the folder /Users/kabkee/Downloads.`  
+
+## ✨ Features
+
+- Clean, responsive design with a modern gradient background
+- 3-digit input fields with automatic focus navigation
+- Real-time validation (unique digits only)
+- Guess history with strikes and balls display
+- Win detection with celebration message
+- Mobile-friendly responsive design
+- Smooth animations and hover effects
+
+### 🔧 Game Mechanics
+
+- All digits must be unique (0–9)
+- Automatic input validation
+- Tracks number of attempts
+- Shows complete guess history
+- Option to start a new game after winning
+- The secret number is logged in the developer console for testing
+
+## 🧠 My Prompt to Amazon Q CLI (continued)
 
 > **Second Prompt:**  
-> _That's a great result and I like the design as well. I'd like to add a feature that the user can switch the digit numbers 3 to 4. The 3-digit baseball game is original one but somehow quite easy._
+> `That’s a great result, and I like the design as well. I’d like to add a feature that allows the user to switch the digit count from 3 to 4. The 3-digit baseball game is the original one, but it’s somehow quite easy.`
 
-Amazon Q CLI interpreted the prompt and generated a fully functional number baseball game in a single `.html` file. It now supports both **3-digit** (Easy) and **4-digit** (Hard) gameplay!
+## 🆙 Enhanced Features – Difficulty Selection
 
----
+- **Difficulty Selector**: Radio buttons to choose between 3-digit (Easy) and 4-digit (Hard) modes
+- **Dynamic Input Fields**: Automatically adjusts based on difficulty
+- **Smart UI Updates**: Rules and labels change dynamically
+- **Enhanced Win Message**: Displays difficulty level
+- **Seamless Switching**: Changing difficulty resets the game
 
-## 🚀 Features
+### 🧠 Difficulty System
 
-- 🎨 Clean, responsive design with modern styling
-- 🔢 3-digit or 4-digit number input with auto-focus navigation
-- ✅ Real-time validation (unique digits only)
-- 🧠 Strike & Ball feedback after each guess
-- 🧾 Guess history display
-- 🎉 Win detection + celebration message
-- 📱 Mobile-friendly layout
-- 💫 Smooth animations and hover effects
-- ⚙️ Difficulty selector (3-digit Easy / 4-digit Hard)
+- **3 Digits (Easy)**: Traditional mode (720 combinations)
+- **4 Digits (Hard)**: Challenging mode (5040 combinations)
 
----
+> **Third Prompt:**  
+> `All works perfectly. As the game gets harder to play, the guess history keeps getting longer downward, so I cannot see the whole page at once. Split the screen into two areas — left for the game layout and right for the guess history.`
 
-## 🎯 Game Rules
+## 🖥️ Major Layout Redesign – Split Screen
 
-1. The computer generates a random 3-digit or 4-digit number (all digits are unique).
-2. You guess the number using the input fields.
-3. After each guess, you'll get:
-   - **Strikes**: correct digit in the correct position.
-   - **Balls**: correct digit but in the wrong position.
-4. Get **3 or 4 strikes** (depending on difficulty) to win!
+To improve usability, especially for longer games:
 
----
+- **Split-Screen Layout**
+  - **Left Panel**: Game controls, difficulty, inputs
+  - **Right Panel**: Guess history (scrollable)
+- **Improved UX**
+  - Game panel stays visible at all times
+  - History panel scrolls independently
+  - Empty state with a target icon before first guess
+- **Responsive Design**
+  - Stacks vertically on small screens
+  - Adjusted max-height to prevent overflow
+  - Smooth scroll and custom scrollbar style
 
-## 🧩 Mechanics
+## 🚀 How to Play
 
-- All digits must be **unique** (0–9)
-- Attempts are counted and displayed
-- Guess history is retained
-- Difficulty can be changed at any time (auto-reset)
-- You can **restart** anytime
+1. A secret number (3 or 4 digits, all unique) is generated.
+2. Enter your guess using the input fields.
+3. Receive feedback:  
+   - **Strike**: correct digit, correct position  
+   - **Ball**: correct digit, wrong position
+4. Win by getting full strikes!
 
-> ℹ️ The secret number is logged to the browser console for testing purposes — you can remove that line for actual gameplay.
+## 📸 Screenshot
 
----
+![Screenshot](./screenshots/Screenshot-v1.png)
 
-## 🕹️ How to Play
+## 🕹️ How to Run
 
 Simply open the file in your browser:
+/index.html
