@@ -2,7 +2,18 @@
 
 This is a lightweight **3-digit Number Baseball Game** built using **only HTML5 and CSS**, generated using **Amazon Q CLI** for the [AWS Game Challenge Event](https://community.aws/content/2xIoduO0xhkhUApQpVUIqBFGmAc/build-games-with-amazon-q-cli-and-score-a-t-shirt).
 
-![Screenshot](screenshots/Screenshot-v1.png)
+![Screenshot](screenshots/Screenshot-v1-1.png)
+![Screenshot](screenshots/Screenshot-v1-3.png)
+![Screenshot](screenshots/Screenshot-v1-2.png)
+
+## 🧠 My Prompt to Amazon Q CLI
+
+> **Prompt:**  
+> _Make a number-baseball game in HTML5 and CSS only, in the folder of `/Users/kabkee/Downloads`._
+
+Amazon Q CLI interpreted the prompt and generated a fully functional number baseball game in a single `.html` file.
+
+---
 
 ## 🚀 Features
 
@@ -36,3 +47,4 @@ This is a lightweight **3-digit Number Baseball Game** built using **only HTML5 
 ## 🕹️ How to Play
 
 Just open the file:
+
