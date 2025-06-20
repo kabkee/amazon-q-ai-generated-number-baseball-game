@@ -195,6 +195,66 @@
             transform: translateY(-1px);
         }
 
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 15px;
+        }
+
+        .difficulty-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-option:hover {
+            color: #667eea;
+        }
+
+        .difficulty-option input[type="radio"] {
+            display: none;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-option input[type="radio"]:checked + .radio-custom {
+            border-color: #667eea;
+            background: #667eea;
+        }
+
+        .difficulty-option input[type="radio"]:checked + .radio-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .difficulty-option input[type="radio"]:checked ~ span:not(.radio-custom) {
+            color: #667eea;
+            font-weight: 600;
+        }
+
         .attempts {
             color: #718096;
             margin-top: 15px;
@@ -225,20 +285,33 @@
 <body>
     <div class="game-container">
         <h1>⚾ Number Baseball</h1>
-        <p class="subtitle">Guess the 3-digit secret number!</p>
+        <p class="subtitle" id="subtitle">Guess the 3-digit secret number!</p>
+        
+        <div class="difficulty-selector">
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="3" checked>
+                <span class="radio-custom"></span>
+                3 Digits (Easy)
+            </label>
+            <label class="difficulty-option">
+                <input type="radio" name="difficulty" value="4">
+                <span class="radio-custom"></span>
+                4 Digits (Hard)
+            </label>
+        </div>
         
         <div class="rules">
             <h3>How to Play:</h3>
             <ul>
                 <li><strong>Strike:</strong> Correct digit in correct position</li>
                 <li><strong>Ball:</strong> Correct digit in wrong position</li>
-                <li><strong>Goal:</strong> Get 3 strikes to win!</li>
+                <li><strong>Goal:</strong> Get <span id="targetStrikes">3</span> strikes to win!</li>
                 <li>Each digit is unique (0-9)</li>
             </ul>
         </div>
 
         <div class="input-section">
-            <div class="number-inputs">
+            <div class="number-inputs" id="numberInputs">
                 <input type="number" class="digit-input" id="digit1" min="0" max="9" maxlength="1">
                 <input type="number" class="digit-input" id="digit2" min="0" max="9" maxlength="1">
                 <input type="number" class="digit-input" id="digit3" min="0" max="9" maxlength="1">
@@ -259,6 +332,7 @@
     <script>
         class NumberBaseballGame {
             constructor() {
+                this.digitCount = 3;
                 this.secretNumber = this.generateSecretNumber();
                 this.attempts = 0;
                 this.gameWon = false;
@@ -268,7 +342,7 @@
 
             generateSecretNumber() {
                 const digits = [];
-                while (digits.length < 3) {
+                while (digits.length < this.digitCount) {
                     const digit = Math.floor(Math.random() * 10);
                     if (!digits.includes(digit)) {
                         digits.push(digit);
@@ -279,17 +353,37 @@
 
             initializeEventListeners() {
                 const guessBtn = document.getElementById('guessBtn');
-                const inputs = document.querySelectorAll('.digit-input');
+                const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
 
                 guessBtn.addEventListener('click', () => this.makeGuess());
 
+                difficultyRadios.forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        this.changeDifficulty(parseInt(e.target.value));
+                    });
+                });
+
+                this.setupInputListeners();
+            }
+
+            setupInputListeners() {
+                const inputs = document.querySelectorAll('.digit-input');
+
                 inputs.forEach((input, index) => {
+                    // Remove existing listeners by cloning the element
+                    const newInput = input.cloneNode(true);
+                    input.parentNode.replaceChild(newInput, input);
+                });
+
+                // Add new listeners to the fresh inputs
+                const freshInputs = document.querySelectorAll('.digit-input');
+                freshInputs.forEach((input, index) => {
                     input.addEventListener('input', (e) => {
                         if (e.target.value.length > 1) {
                             e.target.value = e.target.value.slice(-1);
                         }
-                        if (e.target.value && index < inputs.length - 1) {
-                            inputs[index + 1].focus();
+                        if (e.target.value && index < freshInputs.length - 1) {
+                            freshInputs[index + 1].focus();
                         }
                     });
 
@@ -297,28 +391,83 @@
                         if (e.key === 'Enter') {
                             this.makeGuess();
                         } else if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                            inputs[index - 1].focus();
+                            freshInputs[index - 1].focus();
                         }
                     });
                 });
             }
 
+            changeDifficulty(newDigitCount) {
+                this.digitCount = newDigitCount;
+                this.resetGame();
+                this.updateInputFields();
+                this.updateUI();
+            }
+
+            updateInputFields() {
+                const numberInputs = document.getElementById('numberInputs');
+                numberInputs.innerHTML = '';
+
+                for (let i = 1; i <= this.digitCount; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'digit-input';
+                    input.id = `digit${i}`;
+                    input.min = '0';
+                    input.max = '9';
+                    input.maxlength = '1';
+                    numberInputs.appendChild(input);
+                }
+
+                this.setupInputListeners();
+                document.getElementById('digit1').focus();
+            }
+
+            updateUI() {
+                const subtitle = document.getElementById('subtitle');
+                const targetStrikes = document.getElementById('targetStrikes');
+                
+                subtitle.textContent = `Guess the ${this.digitCount}-digit secret number!`;
+                targetStrikes.textContent = this.digitCount;
+            }
+
+            resetGame() {
+                this.secretNumber = this.generateSecretNumber();
+                this.attempts = 0;
+                this.gameWon = false;
+                
+                // Clear history
+                const historyDiv = document.getElementById('history');
+                const historyList = document.getElementById('historyList');
+                const winMessage = document.getElementById('winMessage');
+                
+                historyDiv.style.display = 'none';
+                historyList.innerHTML = '';
+                winMessage.style.display = 'none';
+                
+                // Enable controls
+                document.getElementById('guessBtn').disabled = false;
+                
+                this.updateAttempts();
+                console.log('New secret number:', this.secretNumber); // For testing
+            }
+
             makeGuess() {
                 if (this.gameWon) return;
 
-                const digit1 = document.getElementById('digit1').value;
-                const digit2 = document.getElementById('digit2').value;
-                const digit3 = document.getElementById('digit3').value;
-
-                if (!digit1 || !digit2 || !digit3) {
-                    alert('Please enter all three digits!');
-                    return;
+                const inputs = document.querySelectorAll('.digit-input');
+                let guess = '';
+                
+                for (let input of inputs) {
+                    if (!input.value) {
+                        alert(`Please enter all ${this.digitCount} digits!`);
+                        return;
+                    }
+                    guess += input.value;
                 }
-
-                const guess = digit1 + digit2 + digit3;
                 
                 // Check for duplicate digits
-                if (new Set(guess).size !== 3) {
+                if (new Set(guess).size !== this.digitCount) {
                     alert('All digits must be unique!');
                     return;
                 }
@@ -328,7 +477,7 @@
                 this.displayResult(guess, result);
                 this.updateAttempts();
 
-                if (result.strikes === 3) {
+                if (result.strikes === this.digitCount) {
                     this.gameWon = true;
                     this.displayWinMessage();
                 }
@@ -340,7 +489,7 @@
                 let strikes = 0;
                 let balls = 0;
 
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < this.digitCount; i++) {
                     if (guess[i] === this.secretNumber[i]) {
                         strikes++;
                     } else if (this.secretNumber.includes(guess[i])) {
@@ -372,11 +521,14 @@
 
             displayWinMessage() {
                 const winMessage = document.getElementById('winMessage');
+                const difficultyText = this.digitCount === 3 ? 'Easy' : 'Hard';
+                
                 winMessage.style.display = 'block';
                 winMessage.innerHTML = `
                     <div class="win-message">
                         🎉 Congratulations! 🎉<br>
-                        You guessed the number ${this.secretNumber} in ${this.attempts} attempts!
+                        You guessed the ${this.digitCount}-digit number ${this.secretNumber} in ${this.attempts} attempts!<br>
+                        <small>Difficulty: ${difficultyText} Mode</small>
                         <br>
                         <button class="new-game-btn" onclick="location.reload()">New Game</button>
                     </div>
