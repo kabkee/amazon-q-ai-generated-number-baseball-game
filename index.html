@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Baseball Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .rules {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .rules h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .rules ul {
+            color: #4a5568;
+            padding-left: 20px;
+        }
+
+        .rules li {
+            margin-bottom: 5px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .number-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .digit-input {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            text-align: center;
+            border: 3px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+        }
+
+        .digit-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: scale(1.05);
+        }
+
+        .guess-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .guess-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .guess-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .history {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .history h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .guess-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .guess-number {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2d3748;
+        }
+
+        .result {
+            display: flex;
+            gap: 15px;
+        }
+
+        .strike, .ball {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .strike {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .ball {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .win-message {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .new-game-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .new-game-btn:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+        }
+
+        .attempts {
+            color: #718096;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .number-inputs {
+                gap: 10px;
+            }
+            
+            .digit-input {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>⚾ Number Baseball</h1>
+        <p class="subtitle">Guess the 3-digit secret number!</p>
+        
+        <div class="rules">
+            <h3>How to Play:</h3>
+            <ul>
+                <li><strong>Strike:</strong> Correct digit in correct position</li>
+                <li><strong>Ball:</strong> Correct digit in wrong position</li>
+                <li><strong>Goal:</strong> Get 3 strikes to win!</li>
+                <li>Each digit is unique (0-9)</li>
+            </ul>
+        </div>
+
+        <div class="input-section">
+            <div class="number-inputs">
+                <input type="number" class="digit-input" id="digit1" min="0" max="9" maxlength="1">
+                <input type="number" class="digit-input" id="digit2" min="0" max="9" maxlength="1">
+                <input type="number" class="digit-input" id="digit3" min="0" max="9" maxlength="1">
+            </div>
+            <button class="guess-btn" id="guessBtn">Make Guess</button>
+        </div>
+
+        <div class="attempts" id="attempts">Attempts: 0</div>
+
+        <div class="history" id="history" style="display: none;">
+            <h3>Guess History</h3>
+            <div id="historyList"></div>
+        </div>
+
+        <div id="winMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        class NumberBaseballGame {
+            constructor() {
+                this.secretNumber = this.generateSecretNumber();
+                this.attempts = 0;
+                this.gameWon = false;
+                this.initializeEventListeners();
+                console.log('Secret number:', this.secretNumber); // For testing - remove in production
+            }
+
+            generateSecretNumber() {
+                const digits = [];
+                while (digits.length < 3) {
+                    const digit = Math.floor(Math.random() * 10);
+                    if (!digits.includes(digit)) {
+                        digits.push(digit);
+                    }
+                }
+                return digits.join('');
+            }
+
+            initializeEventListeners() {
+                const guessBtn = document.getElementById('guessBtn');
+                const inputs = document.querySelectorAll('.digit-input');
+
+                guessBtn.addEventListener('click', () => this.makeGuess());
+
+                inputs.forEach((input, index) => {
+                    input.addEventListener('input', (e) => {
+                        if (e.target.value.length > 1) {
+                            e.target.value = e.target.value.slice(-1);
+                        }
+                        if (e.target.value && index < inputs.length - 1) {
+                            inputs[index + 1].focus();
+                        }
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            this.makeGuess();
+                        } else if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                            inputs[index - 1].focus();
+                        }
+                    });
+                });
+            }
+
+            makeGuess() {
+                if (this.gameWon) return;
+
+                const digit1 = document.getElementById('digit1').value;
+                const digit2 = document.getElementById('digit2').value;
+                const digit3 = document.getElementById('digit3').value;
+
+                if (!digit1 || !digit2 || !digit3) {
+                    alert('Please enter all three digits!');
+                    return;
+                }
+
+                const guess = digit1 + digit2 + digit3;
+                
+                // Check for duplicate digits
+                if (new Set(guess).size !== 3) {
+                    alert('All digits must be unique!');
+                    return;
+                }
+
+                this.attempts++;
+                const result = this.calculateResult(guess);
+                this.displayResult(guess, result);
+                this.updateAttempts();
+
+                if (result.strikes === 3) {
+                    this.gameWon = true;
+                    this.displayWinMessage();
+                }
+
+                this.clearInputs();
+            }
+
+            calculateResult(guess) {
+                let strikes = 0;
+                let balls = 0;
+
+                for (let i = 0; i < 3; i++) {
+                    if (guess[i] === this.secretNumber[i]) {
+                        strikes++;
+                    } else if (this.secretNumber.includes(guess[i])) {
+                        balls++;
+                    }
+                }
+
+                return { strikes, balls };
+            }
+
+            displayResult(guess, result) {
+                const historyDiv = document.getElementById('history');
+                const historyList = document.getElementById('historyList');
+
+                historyDiv.style.display = 'block';
+
+                const guessItem = document.createElement('div');
+                guessItem.className = 'guess-item';
+                guessItem.innerHTML = `
+                    <span class="guess-number">${guess}</span>
+                    <div class="result">
+                        <span class="strike">${result.strikes} Strike${result.strikes !== 1 ? 's' : ''}</span>
+                        <span class="ball">${result.balls} Ball${result.balls !== 1 ? 's' : ''}</span>
+                    </div>
+                `;
+
+                historyList.insertBefore(guessItem, historyList.firstChild);
+            }
+
+            displayWinMessage() {
+                const winMessage = document.getElementById('winMessage');
+                winMessage.style.display = 'block';
+                winMessage.innerHTML = `
+                    <div class="win-message">
+                        🎉 Congratulations! 🎉<br>
+                        You guessed the number ${this.secretNumber} in ${this.attempts} attempts!
+                        <br>
+                        <button class="new-game-btn" onclick="location.reload()">New Game</button>
+                    </div>
+                `;
+
+                document.getElementById('guessBtn').disabled = true;
+                document.querySelectorAll('.digit-input').forEach(input => {
+                    input.disabled = true;
+                });
+            }
+
+            updateAttempts() {
+                document.getElementById('attempts').textContent = `Attempts: ${this.attempts}`;
+            }
+
+            clearInputs() {
+                document.querySelectorAll('.digit-input').forEach(input => {
+                    input.value = '';
+                });
+                document.getElementById('digit1').focus();
+            }
+        }
+
+        // Start the game when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new NumberBaseballGame();
+        });
+    </script>
+</body>
+</html>
